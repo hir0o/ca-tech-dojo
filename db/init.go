@@ -9,22 +9,21 @@ import (
 )
 
 // dbと接続するための関数
-func Connect() *sql.DB {
+func Connect() (*sql.DB, error) {
 	driverName := "mysql"
 	DsName := "root@(127.0.0.1:3306)/ca_dojo?charset=utf8"
-	db, _ := sql.Open(driverName, DsName)
+	db, err := sql.Open(driverName, DsName)
 
-	//! エラーハンドリングがよくわからない。。
-	// if err != nil {
-	// 	fmt.Fprintln(os.Stderr, err)
-	// }
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
 
-	return db
+	return db, err
 }
 
 // migration
 func Init() {
-	db := Connect()
+	db, _ := Connect()
 
 	// テーブルの作成
 	var sql [1]string = [1]string{ // TODO: 他のテーブルに関しても追加する

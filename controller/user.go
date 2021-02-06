@@ -15,7 +15,7 @@ type TokenJson struct {
 	Token string `json:"token"`
 }
 
-// POST /user/create
+// UserCreate POST /user/create
 func UserCreate(c echo.Context) (err error) {
 	user := new(NameJson) // jsonの受け取り
 	if err := c.Bind(user); err != nil {
@@ -29,7 +29,7 @@ func UserCreate(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, res)
 }
 
-// GET /user/get
+// UserGet GET /user/get
 func UserGet(c echo.Context) (err error) {
 	// x-tokenの取得
 	xTokne := c.Request().Header.Get("x-token")
@@ -42,6 +42,7 @@ func UserGet(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, res)
 }
 
+// UserUpdate PUT /user/update
 func UserUpdate(c echo.Context) (err error) {
 	user := new(NameJson)
 	if err := c.Bind(user); err != nil {

@@ -9,16 +9,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// データ型
+// User データ型
 type User struct {
 	ID    int64
 	Name  string
 	Token string
 }
 
-// データの作成
+// CreateUser データの作成
 func CreateUser(name string) string {
-	db := db.Connect()
+	db, _ := db.Connect()
 
 	token := base64.StdEncoding.EncodeToString([]byte(name))
 
@@ -30,9 +30,9 @@ func CreateUser(name string) string {
 	return token
 }
 
-// ユーザーの照会
+// GetUser ユーザーの照会
 func GetUser(token string) string {
-	db := db.Connect()
+	db, _ := db.Connect()
 
 	// dbから取得
 	const sql = "SELECT * FROM user WHERE token = ?"
@@ -52,9 +52,9 @@ func GetUser(token string) string {
 	return u.Name
 }
 
-// ユーザー名の更新
+// UpdateUser ユーザー名の更新
 func UpdateUser(newName string, token string) {
-	db := db.Connect()
+	db, _ := db.Connect()
 
 	const sql = "UPDATE user SET name = ? WHERE token = ?;"
 	_, err := db.Query(sql, newName, token)
