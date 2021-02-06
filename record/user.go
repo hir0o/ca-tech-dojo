@@ -18,7 +18,7 @@ type User struct {
 
 // CreateUser データの作成
 func CreateUser(name string) string {
-	db, _ := db.Connect()
+	db := db.Connect()
 
 	token := base64.StdEncoding.EncodeToString([]byte(name))
 
@@ -32,7 +32,7 @@ func CreateUser(name string) string {
 
 // GetUser ユーザーの照会
 func GetUser(token string) (string, error) {
-	db, _ := db.Connect()
+	db := db.Connect()
 
 	// dbから取得
 	const sql = "SELECT * FROM user WHERE token = ?"
@@ -49,7 +49,7 @@ func GetUser(token string) (string, error) {
 
 // UpdateUser ユーザー名の更新
 func UpdateUser(newName string, token string) error {
-	db, _ := db.Connect()
+	db := db.Connect()
 
 	const sql = "UPDATE user SET name = ? WHERE token = ?;"
 	_, err := db.Exec(sql, newName, token)
