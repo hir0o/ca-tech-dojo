@@ -2,6 +2,7 @@ package record
 
 import (
 	"ca-tech-dojo/db"
+	"encoding/base64"
 	"fmt"
 	"os"
 
@@ -18,11 +19,34 @@ type User struct {
 // データの作成
 func CreateUser(name string) string {
 	db := db.Connect()
-	token := "123456789" // TODO: tokenを生成する
+
+	token := base64.StdEncoding.EncodeToString([]byte(name))
+
 	const sql = "INSERT INTO user(name,token) values (?,?)"
 	_, err := db.Exec(sql, name, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
 	return token
+}
+
+func GetUser(token string) string {
+	db := db.Connect()
+
+	// dbから取得
+	const sql = "SELECT * FROM user WHERE token = ?"
+	rows, err := db.Query(sql, token)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+
+	var u User
+	for rows.Next() { //! この辺よくわからない
+		// データをスキャン
+		if err := rows.Scan(&u.ID, &u.Name, &u.Token); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	}
+
+	return u.Name
 }

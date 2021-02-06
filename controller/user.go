@@ -35,8 +35,12 @@ type resUserGet struct {
 
 // GET /user/get
 func UserGet(c echo.Context) (err error) {
+	// x-tokenの取得
+	xTokne := c.Request().Header.Get("x-token")
+	username := record.GetUser(xTokne)
+
 	res := resUserGet{
-		Name: "username",
+		Name: username,
 	}
 	return c.JSON(http.StatusOK, res)
 }
