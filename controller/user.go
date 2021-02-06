@@ -33,8 +33,12 @@ func UserCreate(c echo.Context) (err error) {
 func UserGet(c echo.Context) (err error) {
 	// x-tokenの取得
 	xTokne := c.Request().Header.Get("x-token")
-	// TODO: x-tokenでの認証が失敗した時の処理
-	username := record.GetUser(xTokne)
+	username, err := record.GetUser(xTokne)
+
+	// errがあったら、403を返す
+	if err != nil {
+		return c.NoContent(http.StatusForbidden)
+	}
 
 	res := NameJson{
 		Name: username,
@@ -50,9 +54,11 @@ func UserUpdate(c echo.Context) (err error) {
 	}
 	// x-tokenの取得
 	xTokne := c.Request().Header.Get("x-token")
-	// TODO: x-tokenでの認証が失敗した時の処理
 
-	record.UpdateUser(user.Name, xTokne)
+	if err := record.UpdateUser(user.Name, xTokne); err != nil {
+		// errがあったら、403
+		return c.NoContent(http.StatusForbidden)
+	}
 
 	res := NameJson{
 		Name: user.Name,

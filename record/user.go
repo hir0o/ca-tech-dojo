@@ -31,34 +31,30 @@ func CreateUser(name string) string {
 }
 
 // GetUser ユーザーの照会
-func GetUser(token string) string {
+func GetUser(token string) (string, error) {
 	db, _ := db.Connect()
 
 	// dbから取得
 	const sql = "SELECT * FROM user WHERE token = ?"
-	rows, err := db.Query(sql, token)
+	row := db.QueryRow(sql, token)
+
+	var u User
+	// データをスキャン
+	err := row.Scan(&u.ID, &u.Name, &u.Token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-
-	var u User
-	for rows.Next() { //! この辺よくわからない
-		// データをスキャン
-		if err := rows.Scan(&u.ID, &u.Name, &u.Token); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	}
-
-	return u.Name
+	return u.Name, err
 }
 
 // UpdateUser ユーザー名の更新
-func UpdateUser(newName string, token string) {
+func UpdateUser(newName string, token string) error {
 	db, _ := db.Connect()
 
 	const sql = "UPDATE user SET name = ? WHERE token = ?;"
-	_, err := db.Query(sql, newName, token)
+	_, err := db.Exec(sql, newName, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
+	return err
 }
