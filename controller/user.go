@@ -7,40 +7,55 @@ import (
 	"github.com/labstack/echo"
 )
 
-type reqUserCreate struct {
+type NameJson struct {
 	Name string `json:"name"`
 }
 
-type resUserCreate struct {
+type TokenJson struct {
 	Token string `json:"token"`
 }
 
 // POST /user/create
 func UserCreate(c echo.Context) (err error) {
-	user := new(reqUserCreate) // jsonの受け取り
+	user := new(NameJson) // jsonの受け取り
 	if err := c.Bind(user); err != nil {
 		return err
 	}
 
 	token := record.CreateUser(user.Name) // userの作成
-	res := resUserCreate{
+	res := TokenJson{
 		Token: token,
 	}
 	return c.JSON(http.StatusOK, res)
-}
-
-type resUserGet struct {
-	Name string `json:"name"`
 }
 
 // GET /user/get
 func UserGet(c echo.Context) (err error) {
 	// x-tokenの取得
 	xTokne := c.Request().Header.Get("x-token")
+	// TODO: x-tokenでの認証が失敗した時の処理
 	username := record.GetUser(xTokne)
 
-	res := resUserGet{
+	res := NameJson{
 		Name: username,
 	}
+	return c.JSON(http.StatusOK, res)
+}
+
+func UserUpdate(c echo.Context) (err error) {
+	user := new(NameJson)
+	if err := c.Bind(user); err != nil {
+		return err
+	}
+	// x-tokenの取得
+	xTokne := c.Request().Header.Get("x-token")
+	// TODO: x-tokenでの認証が失敗した時の処理
+
+	record.UpdateUser(user.Name, xTokne)
+
+	res := NameJson{
+		Name: user.Name,
+	}
+
 	return c.JSON(http.StatusOK, res)
 }

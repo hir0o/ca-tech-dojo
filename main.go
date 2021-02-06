@@ -12,5 +12,6 @@ func main() {
 	db.Init()
 	e.POST("/user/create", controller.UserCreate)
 	e.GET("/user/get", controller.UserGet)
+	e.PUT("/user/update", controller.UserUpdate)
 	e.Logger.Fatal(e.Start(":8080"))
 }

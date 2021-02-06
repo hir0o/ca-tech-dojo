@@ -30,6 +30,7 @@ func CreateUser(name string) string {
 	return token
 }
 
+// ユーザーの照会
 func GetUser(token string) string {
 	db := db.Connect()
 
@@ -49,4 +50,15 @@ func GetUser(token string) string {
 	}
 
 	return u.Name
+}
+
+// ユーザー名の更新
+func UpdateUser(newName string, token string) {
+	db := db.Connect()
+
+	const sql = "UPDATE user SET name = ? WHERE token = ?;"
+	_, err := db.Query(sql, newName, token)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
 }
