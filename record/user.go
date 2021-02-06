@@ -19,7 +19,7 @@ type User struct {
 func CreateUser(name string) string {
 	db := db.Connect()
 	token := "123456789" // TODO: tokenを生成する
-	const sql = "INSERT INTO user(name token) values (? ?)"
+	const sql = "INSERT INTO user(name,token) values (?,?)"
 	_, err := db.Exec(sql, name, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

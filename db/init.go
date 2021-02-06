@@ -30,7 +30,8 @@ func Init() {
 	var sql [1]string = [1]string{ // TODO: 他のテーブルに関しても追加する
 		`CREATE TABLE IF NOT EXISTS user (
 			id   INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-			name TEXT NOT NULL
+			name TEXT NOT NULL,
+			token TEXT NOT NULL
 		);`,
 	}
 
