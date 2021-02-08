@@ -2,6 +2,7 @@ package record
 
 import (
 	"ca-tech-dojo/db"
+	"ca-tech-dojo/lib"
 	"fmt"
 	"os"
 
@@ -18,8 +19,8 @@ func GachaDraw(times int, token string) []Charactor {
 	db := db.Connect()
 	var charactors []Charactor
 
-	gachaTimes := [4]int{0, 2, 0, 0} // TODO: ランダムにする
-	for i, t := range gachaTimes {   // rankごとに、キャラクターを取得
+	gachaTimes := lib.WeightedNumber(times)
+	for i, t := range gachaTimes { // rankごとに、キャラクターを取得
 		if t == 0 { // 回数が0だったらbreak
 			continue
 		}
@@ -55,7 +56,6 @@ func GachaDraw(times int, token string) []Charactor {
 	for _, charactor := range charactors {
 		const sql = "INSERT INTO userCharactor(userId,charactorId) values (?,?)"
 		_, err := db.Exec(sql, u.ID, charactor.ID)
-		println(charactor.Name)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
