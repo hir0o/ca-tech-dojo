@@ -14,5 +14,6 @@ func main() {
 	e.GET("/user/get", controller.UserGet)
 	e.PUT("/user/update", controller.UserUpdate)
 	e.POST("/gacha/draw", controller.GachaDraw)
+	e.GET("/character/list", controller.CharacterList)
 	e.Logger.Fatal(e.Start(":8080"))
 }

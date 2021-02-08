@@ -7,10 +7,10 @@ import (
 
 // 重み一覧
 var weights = [...]int{
-	5,  // SSR
-	10, // SR
-	35, // R
-	50, // N
+	5,  // 0:SSR
+	10, // 1:SR
+	35, // 2:R
+	50, // 3:N
 }
 
 func WeightedNumber(times int) [len(weights)]int {
