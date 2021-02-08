@@ -26,7 +26,7 @@ func Init() {
 	db := Connect()
 
 	// テーブルの作成
-	var sql [3]string = [3]string{ // TODO: 他のテーブルに関しても追加する
+	var sql [3]string = [3]string{
 		`CREATE TABLE IF NOT EXISTS user (
 			id   INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
 			name TEXT NOT NULL,
