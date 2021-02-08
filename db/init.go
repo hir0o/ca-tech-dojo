@@ -26,11 +26,21 @@ func Init() {
 	db := Connect()
 
 	// テーブルの作成
-	var sql [1]string = [1]string{ // TODO: 他のテーブルに関しても追加する
+	var sql [3]string = [3]string{ // TODO: 他のテーブルに関しても追加する
 		`CREATE TABLE IF NOT EXISTS user (
 			id   INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
 			name TEXT NOT NULL,
 			token TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS userCharactor (
+			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			userId INTEGER NOT NULL,
+			charactorId INTEGER NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS charactor (
+			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			charactorRank INTEGER NOT NULL,
+			name TEXT NOT NULL
 		);`,
 	}
 
