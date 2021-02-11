@@ -9,10 +9,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Charactor struct {
-	ID            int
+type CharactorDB struct {
+	ID            string
 	CharactorRank int
 	Name          string
+}
+
+type Charactor struct {
+	CharacterID string `json:"characterID"`
+	Name        string `json:"name"`
 }
 
 func GachaDraw(times int, token string) []Charactor {
@@ -32,15 +37,14 @@ func GachaDraw(times int, token string) []Charactor {
 			return nil
 		}
 		for rows.Next() {
-			var c Charactor
+			var c CharactorDB
 			// 取得したデータを取得
 			if err := rows.Scan(&c.ID, &c.CharactorRank, &c.Name); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				return nil
 			}
-			println(c.Name)
 			// 引いたキャラクターを保存
-			charactors = append(charactors, Charactor{c.ID, c.CharactorRank, c.Name})
+			charactors = append(charactors, Charactor{c.ID, c.Name})
 		}
 	}
 
@@ -55,7 +59,7 @@ func GachaDraw(times int, token string) []Charactor {
 	// 取得したcharactorをuserCharactorテーブルに保存
 	for _, charactor := range charactors {
 		const sql = "INSERT INTO userCharactor(userId,charactorId) values (?,?)"
-		_, err := db.Exec(sql, u.ID, charactor.ID)
+		_, err := db.Exec(sql, u.ID, charactor.CharacterID)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
