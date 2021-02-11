@@ -7,15 +7,15 @@ import (
 )
 
 type Character struct {
-	UserCharacterID int
-	CharacterID     int
-	Name            string
+	UserCharacterID string `json:"userCharacterID"`
+	CharacterID     string `json:"characterID"`
+	Name            string `json:"name"`
 }
 
 type DB struct {
-	UserCharacterID  int
+	UserCharacterID  string
 	UserID           int
-	CharacterID      int
+	CharacterID      string
 	UserCCharacterID int
 	CharacterRank    int
 	Name             string
