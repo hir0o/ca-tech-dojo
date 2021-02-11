@@ -34,8 +34,8 @@ func Init() {
 		);`,
 		`CREATE TABLE IF NOT EXISTS userCharactor (
 			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-			userId INTEGER NOT NULL,
-			charactorId INTEGER NOT NULL
+			userId INTEGER REFERENCES user(id),
+			charactorId INTEGER REFERENCES charactor(id)
 		);`,
 		`CREATE TABLE IF NOT EXISTS charactor (
 			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
