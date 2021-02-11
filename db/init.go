@@ -32,14 +32,14 @@ func Init() {
 			name TEXT NOT NULL,
 			token TEXT NOT NULL
 		);`,
-		`CREATE TABLE IF NOT EXISTS userCharactor (
+		`CREATE TABLE IF NOT EXISTS userCharacter (
 			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
 			userId INTEGER REFERENCES user(id),
-			charactorId INTEGER REFERENCES charactor(id)
+			characterId INTEGER REFERENCES character(id)
 		);`,
-		`CREATE TABLE IF NOT EXISTS charactor (
+		`CREATE TABLE IF NOT EXISTS character (
 			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-			charactorRank INTEGER NOT NULL,
+			characterRank INTEGER NOT NULL,
 			name TEXT NOT NULL
 		);`,
 	}

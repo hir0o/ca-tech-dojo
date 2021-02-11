@@ -34,10 +34,10 @@ func CharacterList(token string) []Character {
 		fmt.Fprintln(os.Stderr, err)
 	}
 
-	const getUserCharacterID = "SELECT * FROM userCharactor WHERE user_id = ?"
+	const getUserCharacterID = "SELECT * FROM userCharacter WHERE user_id = ?"
 
 	// userがもつcharacterを取得
-	const getCharacterSql = "SELECT * FROM userCharactor INNER JOIN charactor ON charactor.id = userCharactor.charactorId WHERE userCharactor.userId = ?;"
+	const getCharacterSql = "SELECT * FROM userCharacter INNER JOIN character ON character.id = userCharacter.characterId WHERE userCharacter.userId = ?;"
 	rows, error := db.Query(getCharacterSql, u.ID)
 	if error != nil {
 		fmt.Fprintln(os.Stderr, err)
