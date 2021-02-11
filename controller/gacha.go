@@ -13,13 +13,7 @@ type TimesJson struct {
 }
 
 type ResultJson struct {
-	Results []record.Charactor
-}
-
-type Charactor struct {
-	ID            int
-	CharactorRank int
-	Name          string
+	Results []record.GachaCharacter `json:"results"`
 }
 
 // GachaDraw  /gacha/draw
@@ -34,10 +28,10 @@ func GachaDraw(c echo.Context) (err error) {
 	// x-tokenを受け取る
 	xTokne := c.Request().Header.Get("x-token")
 
-	charactors := record.GachaDraw(timesInt, xTokne)
+	characters := record.GachaDraw(timesInt, xTokne)
 
 	res := ResultJson{
-		Results: charactors,
+		Results: characters,
 	}
 	return c.JSON(http.StatusOK, res)
 }

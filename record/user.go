@@ -2,7 +2,7 @@ package record
 
 import (
 	"ca-tech-dojo/db"
-	"encoding/base64"
+	"ca-tech-dojo/lib"
 	"fmt"
 	"os"
 
@@ -20,7 +20,7 @@ type User struct {
 func CreateUser(name string) string {
 	db := db.Connect()
 
-	token := base64.StdEncoding.EncodeToString([]byte(name))
+	token := lib.RandomString()
 
 	const sql = "INSERT INTO user(name,token) values (?,?)"
 	_, err := db.Exec(sql, name, token)

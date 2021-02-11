@@ -8,7 +8,7 @@ import (
 )
 
 type CharactersJson struct {
-	Characters []record.Character
+	Characters []record.Character `json:"characters"`
 }
 
 func CharacterList(c echo.Context) (err error) {

@@ -9,15 +9,20 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Charactor struct {
-	ID            int
-	CharactorRank int
+type CharacterDB struct {
+	ID            string
+	CharacterRank int
 	Name          string
 }
 
-func GachaDraw(times int, token string) []Charactor {
+type GachaCharacter struct {
+	CharacterID string `json:"characterID"`
+	Name        string `json:"name"`
+}
+
+func GachaDraw(times int, token string) []GachaCharacter {
 	db := db.Connect()
-	var charactors []Charactor
+	var characters []GachaCharacter
 
 	gachaTimes := lib.WeightedNumber(times)
 	for i, t := range gachaTimes { // rankごとに、キャラクターを取得
@@ -25,22 +30,21 @@ func GachaDraw(times int, token string) []Charactor {
 			continue
 		}
 		// rankと、数を指定して取得
-		const sql = "SELECT * FROM charactor WHERE (charactor.charactorRank = ?) ORDER BY RAND() LIMIT ?;"
+		const sql = "SELECT * FROM character WHERE (character.characterRank = ?) ORDER BY RAND() LIMIT ?;"
 		rows, err := db.Query(sql, i, t)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			return nil
 		}
 		for rows.Next() {
-			var c Charactor
+			var c CharacterDB
 			// 取得したデータを取得
-			if err := rows.Scan(&c.ID, &c.CharactorRank, &c.Name); err != nil {
+			if err := rows.Scan(&c.ID, &c.CharacterRank, &c.Name); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				return nil
 			}
-			println(c.Name)
 			// 引いたキャラクターを保存
-			charactors = append(charactors, Charactor{c.ID, c.CharactorRank, c.Name})
+			characters = append(characters, GachaCharacter{c.ID, c.Name})
 		}
 	}
 
@@ -52,13 +56,13 @@ func GachaDraw(times int, token string) []Charactor {
 	if err := row.Scan(&u.ID, &u.Name, &u.Token); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	// 取得したcharactorをuserCharactorテーブルに保存
-	for _, charactor := range charactors {
-		const sql = "INSERT INTO userCharactor(userId,charactorId) values (?,?)"
-		_, err := db.Exec(sql, u.ID, charactor.ID)
+	// 取得したcharacterをuserCharacterテーブルに保存
+	for _, character := range characters {
+		const sql = "INSERT INTO userCharacter(userId,characterId) values (?,?)"
+		_, err := db.Exec(sql, u.ID, character.CharacterID)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}
-	return charactors
+	return characters
 }
