@@ -16,12 +16,6 @@ type ResultJson struct {
 	Results []record.Charactor
 }
 
-type Charactor struct {
-	ID            int
-	CharactorRank int
-	Name          string
-}
-
 // GachaDraw  /gacha/draw
 func GachaDraw(c echo.Context) (err error) {
 	times := new(TimesJson)
