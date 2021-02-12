@@ -24,7 +24,7 @@ func GachaDraw(times int, token string) []GachaCharacter {
 	db := db.Connect()
 	var characters []GachaCharacter
 
-	gachaTimes := lib.WeightedNumber(times)
+	gachaTimes := lib.GenerateWeightedNumber(times)
 	for i, t := range gachaTimes { // rankごとに、キャラクターを取得
 		if t == 0 { // 回数が0だったらbreak
 			continue

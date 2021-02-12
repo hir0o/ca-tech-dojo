@@ -17,21 +17,21 @@ type User struct {
 }
 
 // CreateUser データの作成
-func CreateUser(name string) string {
+func CreateUser(name string) (string, error) {
 	db := db.Connect()
 
-	token := lib.RandomString()
+	token := lib.GenerateRandomString()
 
 	const sql = "INSERT INTO user(name,token) values (?,?)"
 	_, err := db.Exec(sql, name, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	return token
+	return token, nil
 }
 
 // GetUser ユーザーの照会
-func GetUser(token string) (string, error) {
+func GetUser(token string) (User, error) {
 	db := db.Connect()
 
 	// dbから取得
@@ -44,7 +44,7 @@ func GetUser(token string) (string, error) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	return u.Name, err
+	return u, err
 }
 
 // UpdateUser ユーザー名の更新

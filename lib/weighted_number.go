@@ -13,7 +13,7 @@ var weights = [...]int{
 	50, // 3:N
 }
 
-func WeightedNumber(times int) [len(weights)]int {
+func GenerateWeightedNumber(times int) [len(weights)]int {
 
 	// 境界値を格納する配列
 	border := make([]int, len(weights))
