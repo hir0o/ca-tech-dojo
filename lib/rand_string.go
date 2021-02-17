@@ -2,7 +2,7 @@ package lib
 
 import "math/rand"
 
-func RandomString() string {
+func GenerateRandomString() string {
 	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 	b := make([]rune, 30)

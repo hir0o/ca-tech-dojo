@@ -2,6 +2,7 @@ package controller
 
 import (
 	"ca-tech-dojo/record"
+	"database/sql"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -16,7 +17,8 @@ type TokenJson struct {
 }
 
 // UserCreate POST /user/create
-func UserCreate(c echo.Context) (err error) {
+func UserCreate(c echo.Context, db *sql.DB) (err error) {
+	// TODO: newと := の違い
 	user := new(NameJson) // jsonの受け取り
 	if err := c.Bind(user); err != nil {
 		return err
@@ -32,17 +34,17 @@ func UserCreate(c echo.Context) (err error) {
 // UserGet GET /user/get
 func UserGet(c echo.Context) (err error) {
 	// x-tokenの取得
-	xTokne := c.Request().Header.Get("x-token")
-	username, err := record.GetUser(xTokne)
+	token := c.Request().Header.Get("x-token")
+	username, err := record.GetUser(token) // user形で返す
 
-	// errがあったら、403を返す
+	// errがあったら、403を返す 500エラーも返す
 	if err != nil {
 		return c.NoContent(http.StatusForbidden)
 	}
-
 	res := NameJson{
 		Name: username,
 	}
+
 	return c.JSON(http.StatusOK, res)
 }
 
@@ -53,9 +55,9 @@ func UserUpdate(c echo.Context) (err error) {
 		return err
 	}
 	// x-tokenの取得
-	xTokne := c.Request().Header.Get("x-token")
+	token := c.Request().Header.Get("x-token")
 
-	if err := record.UpdateUser(user.Name, xTokne); err != nil {
+	if err := record.UpdateUser(user.Name, token); err != nil {
 		// errがあったら、403
 		return c.NoContent(http.StatusForbidden)
 	}

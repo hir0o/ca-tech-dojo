@@ -12,15 +12,6 @@ type Character struct {
 	Name            string `json:"name"`
 }
 
-type DB struct {
-	UserCharacterID  string
-	UserID           int
-	CharacterID      string
-	UserCCharacterID int
-	CharacterRank    int
-	Name             string
-}
-
 func CharacterList(token string) []Character {
 	db := db.Connect()
 
@@ -44,17 +35,25 @@ func CharacterList(token string) []Character {
 	}
 
 	var characters []Character
+	type CharacterDB struct {
+		UserCharacterID      string
+		UserID               int
+		CharacterID          string
+		UserCharacterTableID int
+		CharacterRank        int
+		Name                 string
+	}
 	for rows.Next() {
-		var d DB
+		var c CharacterDB
 		// 取得したデータを取得
-		if err := rows.Scan(&d.UserCharacterID, &d.UserID, &d.CharacterID, &d.UserCCharacterID, &d.CharacterRank, &d.Name); err != nil {
+		if err := rows.Scan(&c.UserCharacterID, &c.UserID, &c.CharacterID, &c.UserCharacterTableID, &c.CharacterRank, &c.Name); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			return nil
 		}
 		characters = append(characters, Character{
-			UserCharacterID: d.UserCharacterID,
-			CharacterID:     d.CharacterID,
-			Name:            d.Name,
+			UserCharacterID: c.UserCharacterID,
+			CharacterID:     c.CharacterID,
+			Name:            c.Name,
 		})
 	}
 	return characters

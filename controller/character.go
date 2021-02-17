@@ -12,9 +12,9 @@ type CharactersJson struct {
 }
 
 func CharacterList(c echo.Context) (err error) {
-	xTokne := c.Request().Header.Get("x-token")
+	token := c.Request().Header.Get("x-token") // タイポ
 
-	characters := record.CharacterList(xTokne)
+	characters := record.CharacterList(token)
 
 	res := CharactersJson{
 		Characters: characters,

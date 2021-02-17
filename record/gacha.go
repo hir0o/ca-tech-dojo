@@ -24,7 +24,7 @@ func GachaDraw(times int, token string) []GachaCharacter {
 	db := db.Connect()
 	var characters []GachaCharacter
 
-	gachaTimes := lib.WeightedNumber(times)
+	gachaTimes := lib.GenerateWeightedNumber(times)
 	for i, t := range gachaTimes { // rankごとに、キャラクターを取得
 		if t == 0 { // 回数が0だったらbreak
 			continue
@@ -44,7 +44,10 @@ func GachaDraw(times int, token string) []GachaCharacter {
 				return nil
 			}
 			// 引いたキャラクターを保存
-			characters = append(characters, GachaCharacter{c.ID, c.Name})
+			characters = append(characters, GachaCharacter{
+				CharacterID: c.ID,
+				Name: c.Name,
+			})
 		}
 	}
 
@@ -56,10 +59,10 @@ func GachaDraw(times int, token string) []GachaCharacter {
 	if err := row.Scan(&u.ID, &u.Name, &u.Token); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	// 取得したcharacterをuserCharacterテーブルに保存
-	for _, character := range characters {
-		const sql = "INSERT INTO userCharacter(userId,characterId) values (?,?)"
-		_, err := db.Exec(sql, u.ID, character.CharacterID)
+	// 取得したcharactorをuserCharactorテーブルに保存
+	for _, charactor := range characters {
+		const sql = "INSERT INTO userCharactor(userId,charactorId) values (?,?)"
+		_, err := db.Exec(sql, u.ID, charactor.CharacterID)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
