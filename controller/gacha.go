@@ -13,7 +13,7 @@ type TimesJson struct {
 }
 
 type ResultJson struct {
-	Results []record.GachaCharacter `json:"results"`
+	Results []record.GachaResult `json:"results"`
 }
 
 // GachaDraw  /gacha/draw
