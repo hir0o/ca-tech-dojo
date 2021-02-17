@@ -15,14 +15,14 @@ type CharacterDB struct {
 	Name          string
 }
 
-type GachaCharacter struct {
+type GachaResult struct {
 	CharacterID string `json:"characterID"`
 	Name        string `json:"name"`
 }
 
-func GachaDraw(times int, token string) []GachaCharacter {
+func GachaDraw(times int, token string) []GachaResult {
 	db := db.Connect()
-	var characters []GachaCharacter
+	var characters []CharacterDB
 
 	gachaTimes := lib.GenerateWeightedNumber(times)
 	for i, t := range gachaTimes { // rankごとに、キャラクターを取得
@@ -44,28 +44,31 @@ func GachaDraw(times int, token string) []GachaCharacter {
 				return nil
 			}
 			// 引いたキャラクターを保存
-			characters = append(characters, GachaCharacter{
-				CharacterID: c.ID,
-				Name: c.Name,
-			})
+			characters = append(characters, c)
 		}
 	}
 
 	// userを取得
-	const getUserSQL = "SELECT * FROM users WHERE token = ?"
-	row := db.QueryRow(getUserSQL, token)
+	var user User
+	user, _ = GetUser(token)
 
-	var u User
-	if err := row.Scan(&u.ID, &u.Name, &u.Token); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-	// 取得したcharactorをuserCharactorテーブルに保存
-	for _, charactor := range characters {
-		const sql = "INSERT INTO usersCharactors(userId,charactorId) values (?,?)"
-		_, err := db.Exec(sql, u.ID, charactor.CharacterID)
-		if err != nil {
+	// 結果を格納する変数
+	var gachaResults []GachaResult
+
+	// 取得したcharactorをusersCharacterと、ownテーブルに保存
+	for _, character := range characters {
+		const ownSQL = "INSERT INTO own(userId,usersCharacterId) values (?,?)"
+		if _, err := db.Exec(ownSQL, user.ID, character.ID); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
+		const usersCharactersSQL = "INSERT INTO usersCharacters(characterRank,characterName) values (?,?)"
+		if _, err := db.Exec(usersCharactersSQL, character.Name, character.CharacterRank); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		gachaResults = append(gachaResults, GachaResult{
+			CharacterID: character.ID,
+			Name: character.Name,
+		})
 	}
-	return characters
+	return gachaResults
 }
