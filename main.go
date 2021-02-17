@@ -9,7 +9,8 @@ import (
 
 func main() {
 	e := echo.New()
-	db.Init()
+	db = db.Init()
+
 	e.POST("/user/create", controller.UserCreate)
 	e.GET("/user/get", controller.UserGet)
 	e.PUT("/user/update", controller.UserUpdate)
