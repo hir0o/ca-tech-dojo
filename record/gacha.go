@@ -57,12 +57,17 @@ func GachaDraw(times int, token string) []GachaResult {
 
 	// 取得したcharactorをusersCharacterと、ownテーブルに保存
 	for _, character := range characters {
-		const ownSQL = "INSERT INTO own(userId,usersCharacterId) values (?,?)"
-		if _, err := db.Exec(ownSQL, user.ID, character.ID); err != nil {
+		const usersCharactersSQL = "INSERT INTO usersCharacters(characterRank,characterName) values (?,?)"
+		r, err := db.Exec(usersCharactersSQL, character.CharacterRank, character.Name)
+		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-		const usersCharactersSQL = "INSERT INTO usersCharacters(characterRank,characterName) values (?,?)"
-		if _, err := db.Exec(usersCharactersSQL, character.Name, character.CharacterRank); err != nil {
+		id, err := r.LastInsertId()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		const ownSQL = "INSERT INTO own(userId,usersCharacterId) values (?,?)"
+		if _, err := db.Exec(ownSQL, user.ID, id); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 		gachaResults = append(gachaResults, GachaResult{
