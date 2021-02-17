@@ -25,10 +25,10 @@ func GachaDraw(c echo.Context) (err error) {
 
 	// 型のキャスト
 	timesInt, _ := strconv.Atoi(times.Times)
-	// x-tokenを受け取る
-	xTokne := c.Request().Header.Get("x-token")
+	// tokenが違ったら403
+	token := c.Request().Header.Get("x-token")
 
-	characters := record.GachaDraw(timesInt, xTokne)
+	characters := record.GachaDraw(timesInt, token)
 
 	res := ResultJson{
 		Results: characters,
