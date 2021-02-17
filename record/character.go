@@ -16,7 +16,7 @@ func CharacterList(token string) []Character {
 	db := db.Connect()
 
 	// dbから取得
-	const sql = "SELECT * FROM user WHERE token = ?"
+	const sql = "SELECT * FROM users WHERE token = ?"
 	row := db.QueryRow(sql, token)
 
 	var u User
@@ -25,11 +25,11 @@ func CharacterList(token string) []Character {
 		fmt.Fprintln(os.Stderr, err)
 	}
 
-	const getUserCharacterID = "SELECT * FROM userCharacter WHERE user_id = ?"
+	const getUserCharacterID = "SELECT * FROM usersCharacters WHERE user_id = ?"
 
 	// userがもつcharacterを取得
-	const getCharacterSql = "SELECT * FROM userCharacter INNER JOIN character ON character.id = userCharacter.characterId WHERE userCharacter.userId = ?;"
-	rows, error := db.Query(getCharacterSql, u.ID)
+	const getCharacterSQL = "SELECT * FROM usersCharacters INNER JOIN characters ON characters.id = usersCharacters.characterId WHERE usersCharacters.userId = ?;"
+	rows, error := db.Query(getCharacterSQL, u.ID)
 	if error != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}

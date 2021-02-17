@@ -30,7 +30,7 @@ func GachaDraw(times int, token string) []GachaCharacter {
 			continue
 		}
 		// rankと、数を指定して取得
-		const sql = "SELECT * FROM character WHERE (character.characterRank = ?) ORDER BY RAND() LIMIT ?;"
+		const sql = "SELECT * FROM characters WHERE (characters.characterRank = ?) ORDER BY RAND() LIMIT ?;"
 		rows, err := db.Query(sql, i, t)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -52,7 +52,7 @@ func GachaDraw(times int, token string) []GachaCharacter {
 	}
 
 	// userを取得
-	const getUserSQL = "SELECT * FROM user WHERE token = ?"
+	const getUserSQL = "SELECT * FROM users WHERE token = ?"
 	row := db.QueryRow(getUserSQL, token)
 
 	var u User
@@ -61,7 +61,7 @@ func GachaDraw(times int, token string) []GachaCharacter {
 	}
 	// 取得したcharactorをuserCharactorテーブルに保存
 	for _, charactor := range characters {
-		const sql = "INSERT INTO userCharactor(userId,charactorId) values (?,?)"
+		const sql = "INSERT INTO usersCharactors(userId,charactorId) values (?,?)"
 		_, err := db.Exec(sql, u.ID, charactor.CharacterID)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
