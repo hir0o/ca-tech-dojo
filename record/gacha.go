@@ -4,6 +4,7 @@ import (
 	"ca-tech-dojo/lib"
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -46,6 +47,11 @@ func GachaDraw(times int, token string, db *sql.DB) []GachaResult {
 			characters = append(characters, c)
 		}
 	}
+
+	// キャラクターの順番をシャッフル
+	rand.Shuffle(len(characters), func(i, j int) {
+    characters[i], characters[j] = characters[j], characters[i]
+})
 
 	// userを取得
 	var user User
