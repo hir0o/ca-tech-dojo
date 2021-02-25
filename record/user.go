@@ -1,12 +1,12 @@
 package record
 
 import (
-	"ca-tech-dojo/lib"
 	"database/sql"
 	"fmt"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
 )
 
 // User データ型
@@ -18,7 +18,7 @@ type User struct {
 
 // CreateUser データの作成
 func CreateUser(name string, db *sql.DB) (string, error) {
-	token := lib.GenerateRandomString()
+	token := uuid.New().String()
 
 	const sql = "INSERT INTO users(name,token) values (?,?)"
 	_, err := db.Exec(sql, name, token)
