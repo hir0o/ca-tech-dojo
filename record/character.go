@@ -1,7 +1,7 @@
 package record
 
 import (
-	"ca-tech-dojo/db"
+	"database/sql"
 	"fmt"
 	"os"
 )
@@ -12,15 +12,9 @@ type Character struct {
 	Name            string `json:"name"`
 }
 
-func CharacterList(token string) []Character {
-	db := db.Connect()
+func CharacterList(token string, db *sql.DB) []Character {
 
-	// dbから取得
-	const sql = "SELECT * FROM user WHERE token = ?"
-	row := db.QueryRow(sql, token)
-
-	var u User
-	err := row.Scan(&u.ID, &u.Name, &u.Token)
+	user, err := GetUser(token, db);
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}

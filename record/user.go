@@ -1,8 +1,8 @@
 package record
 
 import (
-	"ca-tech-dojo/db"
 	"ca-tech-dojo/lib"
+	"database/sql"
 	"fmt"
 	"os"
 
@@ -17,9 +17,7 @@ type User struct {
 }
 
 // CreateUser データの作成
-func CreateUser(name string) (string, error) {
-	db := db.Connect()
-
+func CreateUser(name string, db *sql.DB) (string, error) {
 	token := lib.GenerateRandomString()
 
 	const sql = "INSERT INTO user(name,token) values (?,?)"
@@ -31,8 +29,7 @@ func CreateUser(name string) (string, error) {
 }
 
 // GetUser ユーザーの照会
-func GetUser(token string) (User, error) {
-	db := db.Connect()
+func GetUser(token string, db *sql.DB) (User, error) {
 
 	// dbから取得
 	const sql = "SELECT * FROM user WHERE token = ?"
@@ -48,8 +45,8 @@ func GetUser(token string) (User, error) {
 }
 
 // UpdateUser ユーザー名の更新
-func UpdateUser(newName string, token string) error {
-	db := db.Connect()
+func UpdateUser(newName string, token string, db *sql.DB) error {
+
 
 	const sql = "UPDATE user SET name = ? WHERE token = ?;"
 	_, err := db.Exec(sql, newName, token)
