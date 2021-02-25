@@ -34,6 +34,7 @@ func (connect *ConnectDB) UserCreate(c echo.Context) error {
 	res := TokenJson{
 		Token: token,
 	}
+
 	return c.JSON(http.StatusOK, res)
 }
 
