@@ -30,7 +30,8 @@ func CharacterList(token string, db *sql.DB) []Character {
 
 	var characters []Character
 	type CharacterDB struct {
-		UserCharacterID      string
+		ID 									 int
+		UsersCharacterID     string
 		UserID               int
 		CharacterID          string
 		UserCharacterTableID int
@@ -40,12 +41,12 @@ func CharacterList(token string, db *sql.DB) []Character {
 	for rows.Next() {
 		var c CharacterDB
 		// 取得したデータを取得
-		if err := rows.Scan(&c.UserCharacterID, &c.UserID, &c.CharacterID, &c.UserCharacterTableID, &c.CharacterRank, &c.Name); err != nil {
+		if err := rows.Scan(&c.ID, &c.UserID, &c.UsersCharacterID, &c.UserCharacterTableID, &c.CharacterID, &c.CharacterRank, &c.Name); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			return nil
 		}
 		characters = append(characters, Character{
-			UserCharacterID: c.UserCharacterID,
+			UserCharacterID: c.UsersCharacterID,
 			CharacterID:     c.CharacterID,
 			Name:            c.Name,
 		})

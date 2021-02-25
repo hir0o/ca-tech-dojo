@@ -55,8 +55,8 @@ func GachaDraw(times int, token string, db *sql.DB) []GachaResult {
 
 	// 取得したcharactorをusersCharacterと、ownテーブルに保存
 	for _, character := range characters {
-		const usersCharactersSQL = "INSERT INTO usersCharacters(characterRank,characterName) values (?,?)"
-		r, err := db.Exec(usersCharactersSQL, character.CharacterRank, character.Name)
+		const usersCharactersSQL = "INSERT INTO usersCharacters(characterId,characterRank,characterName) values (?,?,?)"
+		r, err := db.Exec(usersCharactersSQL, character.ID, character.CharacterRank, character.Name)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}

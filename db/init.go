@@ -32,6 +32,7 @@ func Init() *sql.DB{
 		);`,
 		`CREATE TABLE IF NOT EXISTS usersCharacters (
 			id            INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			characterId TEXT NOT NULL,
 			characterRank INTEGER NOT NULL,
 			characterName TEXT NOT NULL
 		);`,
