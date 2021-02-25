@@ -17,7 +17,7 @@ type ResultJson struct {
 }
 
 // GachaDraw  /gacha/draw
-func  (connect *Connect)GachaDraw(c echo.Context) (err error) {
+func  (connect *ConnectDB)GachaDraw(c echo.Context) (err error) {
 	times := new(TimesJson)
 	if err := c.Bind(times); err != nil {
 		return err

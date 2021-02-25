@@ -2,6 +2,6 @@ package controller
 
 import "database/sql"
 
-type Connect struct {
+type ConnectDB struct {
 	DB *sql.DB
 }

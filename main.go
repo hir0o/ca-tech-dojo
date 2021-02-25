@@ -7,13 +7,15 @@ import (
 	"github.com/labstack/echo"
 )
 
+
+
 func main() {
 	e := echo.New()
 	db := db.Init()
 
-	handler := controller.Connect{
-    DB: db,
-  }
+	handler := controller.ConnectDB{
+		DB: db,
+	}
 
 	e.POST("/user/create", handler.UserCreate)
 	e.GET("/user/get", handler.UserGet)

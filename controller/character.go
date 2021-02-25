@@ -11,7 +11,7 @@ type CharactersJson struct {
 	Characters []record.Character `json:"characters"`
 }
 
-func (connect *Connect) CharacterList(c echo.Context) (err error) {
+func (connect *ConnectDB) CharacterList(c echo.Context) (err error) {
 	token := c.Request().Header.Get("x-token")
 
 	characters := record.CharacterList(token, connect.DB)

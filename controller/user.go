@@ -18,7 +18,7 @@ type TokenJson struct {
 }
 
 // UserCreate POST /user/create
-func (connect *Connect) UserCreate(c echo.Context) (err error) {
+func (connect *ConnectDB) UserCreate(c echo.Context) (err error) {
 	// TODO: newと := の違い
 	user := new(NameJson) // jsonの受け取り
 	if err := c.Bind(user); err != nil {
@@ -37,7 +37,7 @@ func (connect *Connect) UserCreate(c echo.Context) (err error) {
 }
 
 // UserGet GET /user/get
-func (connect *Connect)UserGet(c echo.Context) (err error) {
+func (connect *ConnectDB)UserGet(c echo.Context) (err error) {
 	// x-tokenの取得
 	token := c.Request().Header.Get("x-token")
 	user, err := record.GetUser(token, connect.DB) // user形で返す
@@ -54,7 +54,7 @@ func (connect *Connect)UserGet(c echo.Context) (err error) {
 }
 
 // UserUpdate PUT /user/update
-func (connect *Connect) UserUpdate(c echo.Context) (err error) {
+func (connect *ConnectDB) UserUpdate(c echo.Context) (err error) {
 	user := new(NameJson)
 	if err := c.Bind(user); err != nil {
 		return err
