@@ -1,7 +1,7 @@
 package record
 
 import (
-	"ca-tech-dojo/db"
+	"database/sql"
 	"fmt"
 	"os"
 )
@@ -12,12 +12,12 @@ type Character struct {
 	Name            string `json:"name"`
 }
 
-func CharacterList(token string) []Character {
-	db := db.Connect()
+func CharacterList(token string, db *sql.DB) ([]Character, error) {
 
-	user, err := GetUser(token);
+	user, err := GetUser(token, db);
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return nil, err
 	}
 
 	const getUserCharacterID = "SELECT * FROM usersCharacters WHERE user_id = ?"
@@ -27,11 +27,13 @@ func CharacterList(token string) []Character {
 	rows, error := db.Query(getCharacterSQL, user.ID)
 	if error != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return nil, err
 	}
 
 	var characters []Character
 	type CharacterDB struct {
-		UserCharacterID      string
+		ID 									 int
+		UsersCharacterID     string
 		UserID               int
 		CharacterID          string
 		UserCharacterTableID int
@@ -41,15 +43,15 @@ func CharacterList(token string) []Character {
 	for rows.Next() {
 		var c CharacterDB
 		// 取得したデータを取得
-		if err := rows.Scan(&c.UserCharacterID, &c.UserID, &c.CharacterID, &c.UserCharacterTableID, &c.CharacterRank, &c.Name); err != nil {
+		if err := rows.Scan(&c.ID, &c.UserID, &c.UsersCharacterID, &c.UserCharacterTableID, &c.CharacterID, &c.CharacterRank, &c.Name); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			return nil
+			return nil, err
 		}
 		characters = append(characters, Character{
-			UserCharacterID: c.UserCharacterID,
+			UserCharacterID: c.UsersCharacterID,
 			CharacterID:     c.CharacterID,
 			Name:            c.Name,
 		})
 	}
-	return characters
+	return characters, nil
 }

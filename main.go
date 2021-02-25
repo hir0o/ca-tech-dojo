@@ -7,13 +7,20 @@ import (
 	"github.com/labstack/echo"
 )
 
+
+
 func main() {
 	e := echo.New()
-	db.Init()
-	e.POST("/user/create", controller.UserCreate)
-	e.GET("/user/get", controller.UserGet)
-	e.PUT("/user/update", controller.UserUpdate)
-	e.POST("/gacha/draw", controller.GachaDraw)
-	e.GET("/character/list", controller.CharacterList)
+	db := db.Init()
+
+	handler := controller.ConnectDB{
+		DB: db,
+	}
+
+	e.POST("/user/create", handler.UserCreate)
+	e.GET("/user/get", handler.UserGet)
+	e.PUT("/user/update", handler.UserUpdate)
+	e.POST("/gacha/draw", handler.GachaDraw)
+	e.GET("/character/list", handler.CharacterList)
 	e.Logger.Fatal(e.Start(":8080"))
 }

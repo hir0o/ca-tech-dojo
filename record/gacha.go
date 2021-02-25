@@ -1,9 +1,10 @@
 package record
 
 import (
-	"ca-tech-dojo/db"
 	"ca-tech-dojo/lib"
+	"database/sql"
 	"fmt"
+	"math/rand"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -20,8 +21,7 @@ type GachaResult struct {
 	Name        string `json:"name"`
 }
 
-func GachaDraw(times int, token string) []GachaResult {
-	db := db.Connect()
+func GachaDraw(times int, token string, db *sql.DB) ([]GachaResult, error) {
 	var characters []CharacterDB
 
 	gachaTimes := lib.GenerateWeightedNumber(times)
@@ -34,46 +34,53 @@ func GachaDraw(times int, token string) []GachaResult {
 		rows, err := db.Query(sql, i, t)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			return nil
+			return nil, err
 		}
 		for rows.Next() {
 			var c CharacterDB
 			// 取得したデータを取得
 			if err := rows.Scan(&c.ID, &c.CharacterRank, &c.Name); err != nil {
 				fmt.Fprintln(os.Stderr, err)
-				return nil
+				return nil, err
 			}
 			// 引いたキャラクターを保存
 			characters = append(characters, c)
 		}
 	}
 
+	// キャラクターの順番をシャッフル
+	rand.Shuffle(len(characters), func(i, j int) {
+    characters[i], characters[j] = characters[j], characters[i]
+})
+
 	// userを取得
 	var user User
-	user, _ = GetUser(token)
-
+	user, _ = GetUser(token, db)
 	// 結果を格納する変数
 	var gachaResults []GachaResult
 
 	// 取得したcharactorをusersCharacterと、ownテーブルに保存
 	for _, character := range characters {
-		const usersCharactersSQL = "INSERT INTO usersCharacters(characterRank,characterName) values (?,?)"
-		r, err := db.Exec(usersCharactersSQL, character.CharacterRank, character.Name)
+		const usersCharactersSQL = "INSERT INTO usersCharacters(characterId,characterRank,characterName) values (?,?,?)"
+		r, err := db.Exec(usersCharactersSQL, character.ID, character.CharacterRank, character.Name)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			return nil, err
 		}
 		id, err := r.LastInsertId()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			return nil, err
 		}
 		const ownSQL = "INSERT INTO own(userId,usersCharacterId) values (?,?)"
 		if _, err := db.Exec(ownSQL, user.ID, id); err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			return nil, err
 		}
 		gachaResults = append(gachaResults, GachaResult{
 			CharacterID: character.ID,
 			Name: character.Name,
 		})
 	}
-	return gachaResults
+	return gachaResults, nil
 }

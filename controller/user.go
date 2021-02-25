@@ -18,34 +18,37 @@ type TokenJson struct {
 }
 
 // UserCreate POST /user/create
-func UserCreate(c echo.Context) (err error) {
+func (connect *ConnectDB) UserCreate(c echo.Context) error {
 	// TODO: newと := の違い
 	user := new(NameJson) // jsonの受け取り
 	if err := c.Bind(user); err != nil {
 		return err
 	}
 
-	token, err := record.CreateUser(user.Name) // userの作成
+	token, err := record.CreateUser(user.Name, connect.DB) // userの作成
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 	res := TokenJson{
 		Token: token,
 	}
+
 	return c.JSON(http.StatusOK, res)
 }
 
 // UserGet GET /user/get
-func UserGet(c echo.Context) (err error) {
+func (connect *ConnectDB)UserGet(c echo.Context) error {
 	// x-tokenの取得
 	token := c.Request().Header.Get("x-token")
-	user, err := record.GetUser(token) // user形で返す
+	user, err := record.GetUser(token, connect.DB)
 
-	// errがあったら、403を返す 500エラーも返す
 	if err != nil {
-		return c.NoContent(http.StatusForbidden)
+		fmt.Fprintln(os.Stderr, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
+
 	res := NameJson{
 		Name: user.Name,
 	}
@@ -54,7 +57,7 @@ func UserGet(c echo.Context) (err error) {
 }
 
 // UserUpdate PUT /user/update
-func UserUpdate(c echo.Context) (err error) {
+func (connect *ConnectDB) UserUpdate(c echo.Context) error {
 	user := new(NameJson)
 	if err := c.Bind(user); err != nil {
 		return err
@@ -62,9 +65,8 @@ func UserUpdate(c echo.Context) (err error) {
 	// x-tokenの取得
 	token := c.Request().Header.Get("x-token")
 
-	if err := record.UpdateUser(user.Name, token); err != nil {
-		// errがあったら、403
-		return c.NoContent(http.StatusForbidden)
+	if err := record.UpdateUser(user.Name, token, connect.DB); err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	res := NameJson{

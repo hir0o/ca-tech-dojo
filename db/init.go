@@ -2,28 +2,19 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// dbと接続するための関数
-func Connect() *sql.DB {
+// migration
+func Init() *sql.DB{
 	driverName := "mysql"
 	DsName := "root@(127.0.0.1:3306)/ca_dojo?charset=utf8"
 	db, err := sql.Open(driverName, DsName)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		panic(err)
 	}
-
-	return db
-}
-
-// migration
-func Init() {
-	db := Connect()
 
 	// テーブルの作成
 	var sql [4]string = [4]string{
@@ -39,6 +30,7 @@ func Init() {
 		);`,
 		`CREATE TABLE IF NOT EXISTS usersCharacters (
 			id            INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			characterId TEXT NOT NULL,
 			characterRank INTEGER NOT NULL,
 			characterName TEXT NOT NULL
 		);`,
@@ -55,4 +47,6 @@ func Init() {
 		}
 	}
 	println("Connected to the database")
+
+	return db;
 }

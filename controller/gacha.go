@@ -17,18 +17,20 @@ type ResultJson struct {
 }
 
 // GachaDraw  /gacha/draw
-func GachaDraw(c echo.Context) (err error) {
+func  (connect *ConnectDB)GachaDraw(c echo.Context) (err error) {
 	times := new(TimesJson)
 	if err := c.Bind(times); err != nil {
 		return err
 	}
 
-	// 型のキャスト
 	timesInt, _ := strconv.Atoi(times.Times)
-	// tokenが違ったら403
 	token := c.Request().Header.Get("x-token")
 
-	characters := record.GachaDraw(timesInt, token)
+	characters, err := record.GachaDraw(timesInt, token, connect.DB)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 
 	res := ResultJson{
 		Results: characters,
