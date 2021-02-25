@@ -8,8 +8,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// dbと接続するための関数
-func Connect() *sql.DB {
+// migration
+func Init() *sql.DB{
 	driverName := "mysql"
 	DsName := "root@(127.0.0.1:3306)/ca_dojo?charset=utf8"
 	db, err := sql.Open(driverName, DsName)
@@ -17,13 +17,6 @@ func Connect() *sql.DB {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-
-	return db
-}
-
-// migration
-func Init() {
-	db := Connect()
 
 	// テーブルの作成
 	var sql [4]string = [4]string{
@@ -55,4 +48,6 @@ func Init() {
 		}
 	}
 	println("Connected to the database")
+
+	return db;
 }

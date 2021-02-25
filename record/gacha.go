@@ -1,8 +1,8 @@
 package record
 
 import (
-	"ca-tech-dojo/db"
 	"ca-tech-dojo/lib"
+	"database/sql"
 	"fmt"
 	"os"
 
@@ -20,8 +20,7 @@ type GachaResult struct {
 	Name        string `json:"name"`
 }
 
-func GachaDraw(times int, token string) []GachaResult {
-	db := db.Connect()
+func GachaDraw(times int, token string, db *sql.DB) []GachaResult {
 	var characters []CharacterDB
 
 	gachaTimes := lib.GenerateWeightedNumber(times)
@@ -50,8 +49,7 @@ func GachaDraw(times int, token string) []GachaResult {
 
 	// userを取得
 	var user User
-	user, _ = GetUser(token)
-
+	user, _ = GetUser(token, db)
 	// 結果を格納する変数
 	var gachaResults []GachaResult
 

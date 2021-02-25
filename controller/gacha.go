@@ -17,7 +17,7 @@ type ResultJson struct {
 }
 
 // GachaDraw  /gacha/draw
-func GachaDraw(c echo.Context) (err error) {
+func  (connect *Connect)GachaDraw(c echo.Context) (err error) {
 	times := new(TimesJson)
 	if err := c.Bind(times); err != nil {
 		return err
@@ -28,7 +28,7 @@ func GachaDraw(c echo.Context) (err error) {
 	// tokenが違ったら403
 	token := c.Request().Header.Get("x-token")
 
-	characters := record.GachaDraw(timesInt, token)
+	characters := record.GachaDraw(timesInt, token, connect.DB)
 
 	res := ResultJson{
 		Results: characters,

@@ -11,10 +11,10 @@ type CharactersJson struct {
 	Characters []record.Character `json:"characters"`
 }
 
-func CharacterList(c echo.Context) (err error) {
-	token := c.Request().Header.Get("x-token") // タイポ
+func (connect *Connect) CharacterList(c echo.Context) (err error) {
+	token := c.Request().Header.Get("x-token")
 
-	characters := record.CharacterList(token)
+	characters := record.CharacterList(token, connect.DB)
 
 	res := CharactersJson{
 		Characters: characters,
