@@ -26,28 +26,32 @@ func Init() {
 	db := Connect()
 
 	// テーブルの作成
-	var sql [3]string = [3]string{
-		`CREATE TABLE IF NOT EXISTS user (
-			id   INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-			name TEXT NOT NULL,
+	var sql [4]string = [4]string{
+		`CREATE TABLE IF NOT EXISTS users (
+			id    INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			name  TEXT NOT NULL,
 			token TEXT NOT NULL
 		);`,
-		`CREATE TABLE IF NOT EXISTS userCharacter (
-			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-			userId INTEGER REFERENCES user(id),
-			characterId INTEGER REFERENCES character(id)
+		`CREATE TABLE IF NOT EXISTS own (
+			id               INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			userId           INTEGER NOT NULL,
+			usersCharacterId INTEGER NOT NULL
 		);`,
-		`CREATE TABLE IF NOT EXISTS character (
-			id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+		`CREATE TABLE IF NOT EXISTS usersCharacters (
+			id            INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
 			characterRank INTEGER NOT NULL,
-			name TEXT NOT NULL
+			characterName TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS characters (
+			id            INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			characterRank INTEGER NOT NULL,
+			name          TEXT NOT NULL
 		);`,
 	}
 
 	for _, s := range sql {
 		if _, err := db.Exec(s); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			panic(err)
 		}
 	}
 	println("Connected to the database")

@@ -22,7 +22,7 @@ func CreateUser(name string) (string, error) {
 
 	token := lib.GenerateRandomString()
 
-	const sql = "INSERT INTO user(name,token) values (?,?)"
+	const sql = "INSERT INTO users(name,token) values (?,?)"
 	_, err := db.Exec(sql, name, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -35,7 +35,7 @@ func GetUser(token string) (User, error) {
 	db := db.Connect()
 
 	// dbから取得
-	const sql = "SELECT * FROM user WHERE token = ?"
+	const sql = "SELECT * FROM users WHERE token = ?"
 	row := db.QueryRow(sql, token)
 
 	var u User
@@ -51,7 +51,7 @@ func GetUser(token string) (User, error) {
 func UpdateUser(newName string, token string) error {
 	db := db.Connect()
 
-	const sql = "UPDATE user SET name = ? WHERE token = ?;"
+	const sql = "UPDATE users SET name = ? WHERE token = ?;"
 	_, err := db.Exec(sql, newName, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

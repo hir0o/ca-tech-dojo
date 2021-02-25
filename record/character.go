@@ -15,21 +15,16 @@ type Character struct {
 func CharacterList(token string) []Character {
 	db := db.Connect()
 
-	// dbから取得
-	const sql = "SELECT * FROM user WHERE token = ?"
-	row := db.QueryRow(sql, token)
-
-	var u User
-	err := row.Scan(&u.ID, &u.Name, &u.Token)
+	user, err := GetUser(token);
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
 
-	const getUserCharacterID = "SELECT * FROM userCharacter WHERE user_id = ?"
+	const getUserCharacterID = "SELECT * FROM usersCharacters WHERE user_id = ?"
 
 	// userがもつcharacterを取得
-	const getCharacterSql = "SELECT * FROM userCharacter INNER JOIN character ON character.id = userCharacter.characterId WHERE userCharacter.userId = ?;"
-	rows, error := db.Query(getCharacterSql, u.ID)
+	const getCharacterSQL = "SELECT * FROM own INNER JOIN usersCharacters ON usersCharacters.id = own.usersCharacterId WHERE own.userId = ?;"
+	rows, error := db.Query(getCharacterSQL, user.ID)
 	if error != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
