@@ -2,8 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -15,7 +13,7 @@ func Init() *sql.DB{
 	db, err := sql.Open(driverName, DsName)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		panic(err)
 	}
 
 	// テーブルの作成

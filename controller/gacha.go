@@ -23,12 +23,14 @@ func  (connect *ConnectDB)GachaDraw(c echo.Context) (err error) {
 		return err
 	}
 
-	// 型のキャスト
 	timesInt, _ := strconv.Atoi(times.Times)
-	// tokenが違ったら403
 	token := c.Request().Header.Get("x-token")
 
-	characters := record.GachaDraw(timesInt, token, connect.DB)
+	characters, err := record.GachaDraw(timesInt, token, connect.DB)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 
 	res := ResultJson{
 		Results: characters,

@@ -12,11 +12,12 @@ type Character struct {
 	Name            string `json:"name"`
 }
 
-func CharacterList(token string, db *sql.DB) []Character {
+func CharacterList(token string, db *sql.DB) ([]Character, error) {
 
 	user, err := GetUser(token, db);
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return nil, err
 	}
 
 	const getUserCharacterID = "SELECT * FROM usersCharacters WHERE user_id = ?"
@@ -26,6 +27,7 @@ func CharacterList(token string, db *sql.DB) []Character {
 	rows, error := db.Query(getCharacterSQL, user.ID)
 	if error != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return nil, err
 	}
 
 	var characters []Character
@@ -43,7 +45,7 @@ func CharacterList(token string, db *sql.DB) []Character {
 		// 取得したデータを取得
 		if err := rows.Scan(&c.ID, &c.UserID, &c.UsersCharacterID, &c.UserCharacterTableID, &c.CharacterID, &c.CharacterRank, &c.Name); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			return nil
+			return nil, err
 		}
 		characters = append(characters, Character{
 			UserCharacterID: c.UsersCharacterID,
@@ -51,5 +53,5 @@ func CharacterList(token string, db *sql.DB) []Character {
 			Name:            c.Name,
 		})
 	}
-	return characters
+	return characters, nil
 }

@@ -21,7 +21,7 @@ type GachaResult struct {
 	Name        string `json:"name"`
 }
 
-func GachaDraw(times int, token string, db *sql.DB) []GachaResult {
+func GachaDraw(times int, token string, db *sql.DB) ([]GachaResult, error) {
 	var characters []CharacterDB
 
 	gachaTimes := lib.GenerateWeightedNumber(times)
@@ -34,14 +34,14 @@ func GachaDraw(times int, token string, db *sql.DB) []GachaResult {
 		rows, err := db.Query(sql, i, t)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			return nil
+			return nil, err
 		}
 		for rows.Next() {
 			var c CharacterDB
 			// 取得したデータを取得
 			if err := rows.Scan(&c.ID, &c.CharacterRank, &c.Name); err != nil {
 				fmt.Fprintln(os.Stderr, err)
-				return nil
+				return nil, err
 			}
 			// 引いたキャラクターを保存
 			characters = append(characters, c)
@@ -65,19 +65,22 @@ func GachaDraw(times int, token string, db *sql.DB) []GachaResult {
 		r, err := db.Exec(usersCharactersSQL, character.ID, character.CharacterRank, character.Name)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			return nil, err
 		}
 		id, err := r.LastInsertId()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			return nil, err
 		}
 		const ownSQL = "INSERT INTO own(userId,usersCharacterId) values (?,?)"
 		if _, err := db.Exec(ownSQL, user.ID, id); err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			return nil, err
 		}
 		gachaResults = append(gachaResults, GachaResult{
 			CharacterID: character.ID,
 			Name: character.Name,
 		})
 	}
-	return gachaResults
+	return gachaResults, nil
 }

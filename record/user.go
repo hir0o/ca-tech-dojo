@@ -24,6 +24,7 @@ func CreateUser(name string, db *sql.DB) (string, error) {
 	_, err := db.Exec(sql, name, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return token, err
 	}
 	return token, nil
 }
@@ -39,8 +40,9 @@ func GetUser(token string, db *sql.DB) (User, error) {
 	err := row.Scan(&u.ID, &u.Name, &u.Token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return u, err
 	}
-	return u, err
+	return u, nil
 }
 
 // UpdateUser ユーザー名の更新
@@ -49,6 +51,7 @@ func UpdateUser(newName string, token string, db *sql.DB) error {
 	_, err := db.Exec(sql, newName, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		return err
 	}
-	return err
+	return nil
 }
