@@ -29,17 +29,14 @@ func GachaDraw(times int, token string, db *sql.DB) ([]GachaResult, error) {
 		if t == 0 { // 回数が0だったらbreak
 			continue
 		}
-		// rankと、数を指定して取得
-		const sql = "SELECT * FROM characters WHERE (characters.characterRank = ?) ORDER BY RAND() LIMIT ?;"
-		rows, err := db.Query(sql, i, t)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return nil, err
-		}
-		for rows.Next() {
+		for j := 0; j < t; j++ {
+			// rankと、数を指定して取得
+			const sql = "SELECT * FROM characters WHERE (characters.characterRank = ?) ORDER BY RAND() LIMIT 1;"
+			row := db.QueryRow(sql, i)
+
 			var c CharacterDB
 			// 取得したデータを取得
-			if err := rows.Scan(&c.ID, &c.CharacterRank, &c.Name); err != nil {
+			if err := row.Scan(&c.ID, &c.CharacterRank, &c.Name); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				return nil, err
 			}
@@ -50,8 +47,8 @@ func GachaDraw(times int, token string, db *sql.DB) ([]GachaResult, error) {
 
 	// キャラクターの順番をシャッフル
 	rand.Shuffle(len(characters), func(i, j int) {
-    characters[i], characters[j] = characters[j], characters[i]
-})
+		characters[i], characters[j] = characters[j], characters[i]
+	})
 
 	// userを取得
 	var user User

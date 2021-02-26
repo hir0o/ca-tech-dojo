@@ -3,13 +3,12 @@ package controller
 import (
 	"ca-tech-dojo/record"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo"
 )
 
 type TimesJson struct {
-	Times string `json:"times"`
+	Times int `json:"times"`
 }
 
 type ResultJson struct {
@@ -22,11 +21,9 @@ func  (connect *ConnectDB)GachaDraw(c echo.Context) (err error) {
 	if err := c.Bind(times); err != nil {
 		return err
 	}
-
-	timesInt, _ := strconv.Atoi(times.Times)
 	token := c.Request().Header.Get("x-token")
 
-	characters, err := record.GachaDraw(timesInt, token, connect.DB)
+	characters, err := record.GachaDraw(times.Times, token, connect.DB)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
