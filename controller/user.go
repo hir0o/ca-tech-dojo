@@ -69,9 +69,5 @@ func (connect *ConnectDB) UserUpdate(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	res := NameJson{
-		Name: user.Name,
-	}
-
-	return c.JSON(http.StatusOK, res)
+	return c.NoContent(http.StatusOK)
 }

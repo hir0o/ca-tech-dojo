@@ -30,7 +30,8 @@ func CharacterList(token string, db *sql.DB) ([]Character, error) {
 		return nil, err
 	}
 
-	var characters []Character
+	var characters []Character = make([]Character, 0)
+
 	type CharacterDB struct {
 		ID 									 int
 		UsersCharacterID     string
